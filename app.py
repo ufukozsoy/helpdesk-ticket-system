@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from db import db
 from models import Ticket
 
 app = Flask(__name__)
+app.secret_key = "change-this-in-real-project"
+ADMIN_PASSWORD = "powercoders"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///helpdesk.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -14,6 +16,22 @@ with app.app_context():
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        password = request.form["password"]
+        if password == ADMIN_PASSWORD:
+            session["is_admin"] = True
+            return redirect(url_for("admin"))
+        return render_template("admin_login.html", error="Wrong password")
+
+    return render_template("admin_login.html", error=None)
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("is_admin", None)
+    return redirect(url_for("index"))
 
 @app.route("/tickets")
 def tickets():
@@ -43,6 +61,8 @@ def ticket_detail(ticket_id):
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+    if not session.get("is_admin"):
+        return redirect(url_for("admin_login"))
     if request.method == "POST":
         ticket_id = request.form["ticket_id"]
         new_status = request.form["status"]
