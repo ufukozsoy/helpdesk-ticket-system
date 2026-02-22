@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Help Desk</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/tickets">Tickets</a>
+    <a href="/tickets/new">New Ticket</a>
+    <a href="/admin">Admin</a>
+  </nav>
+  <hr>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

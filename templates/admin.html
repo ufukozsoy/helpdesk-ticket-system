@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin</h2>
+<p>
+  <a href="/admin">All</a> |
+  <a href="/admin?status=Open">Open</a> |
+  <a href="/admin?status=In%20Progress">In Progress</a> |
+  <a href="/admin?status=Closed">Closed</a>
+</p>
+{% for t in tickets %}
+  <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+    <p><b>#{{ t.id }}</b> - {{ t.title }} ({{ t.status }})</p>
+
+    <form method="post">
+      <input type="hidden" name="ticket_id" value="{{ t.id }}">
+      <select name="status">
+        <option {% if t.status=="Open" %}selected{% endif %}>Open</option>
+        <option {% if t.status=="In Progress" %}selected{% endif %}>In Progress</option>
+        <option {% if t.status=="Closed" %}selected{% endif %}>Closed</option>
+      </select>
+      <button type="submit">Update</button>
+    </form>
+  </div>
+{% endfor %}
+
+{% endblock %}
